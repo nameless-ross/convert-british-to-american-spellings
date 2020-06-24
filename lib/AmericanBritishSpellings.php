@@ -7,6 +7,10 @@
 				*/
 								
 	class AmericanBritishSpellings {
+
+		/** @var string[] */
+		protected $spelling_overrides;
+
 			/* __construct($args)
 			
 				Constructor.
@@ -14,10 +18,11 @@
 				Load the words into the converter class for ready use.
 			
 			*/
-		
+
 		public function __construct($args) {
 			require_once(__DIR__ . '/AmericanBritishSpellings_Words.php');
 			$this->words = new AmericanBritishSpellings_Words([]);
+			$this->spelling_overrides = $args['spellings'] ?? [];
 			return TRUE;
 		}
 		
@@ -172,7 +177,9 @@
 			*/
 		
 		public function BuildSpellingReplacements() {
-			$spelling_alternatives = $this->words->GetAmericanToBritishSpellings();
+			$unmodified_spellings = $this->words->GetAmericanToBritishSpellings();
+
+			$spelling_alternatives = array_filter( array_merge($unmodified_spellings, $this->spelling_overrides) );
 			
 			$american_spellings = array_keys($spelling_alternatives);
 			$british_spellings = array_values($spelling_alternatives);
